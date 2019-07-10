@@ -16,12 +16,24 @@
 			    http://www.springframework.org/schema/mvc
 			    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <!--配置包扫描-->
-    <context:component-scan base-package="cn.itcast.service"></context:component-scan>
+    <context:component-scan base-package="com.zeus.service.impl"></context:component-scan>
      <!--设置声明时事务-->
     <!--设置切面类-->
     <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
     </bean>
     <!--配置切入点-->
-    <aop:config ></aop:config>
+    <aop:config>
+        <aop:pointcut id="pointCut" expression="execution(* com.zeus.service.impl.*.*(..))"></aop:pointcut>
+        <aop:advisor advice-ref="advice" pointcut-ref="pointCut"></aop:advisor>
+    </aop:config>
+    <tx:advice id="advice" transaction-manager="dataSourceTransactionManager">
+        <tx:attributes>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="save*"/>
+            <tx:method name="update*"/>
+            <tx:method name="delete*"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
 </beans>
